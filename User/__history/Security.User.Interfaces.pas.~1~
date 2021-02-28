@@ -1,0 +1,7 @@
+unit Security.User.Interfaces;
+
+interface
+
+implementation
+
+end.

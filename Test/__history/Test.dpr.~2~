@@ -1,0 +1,14 @@
+program Test;
+
+uses
+  Vcl.Forms,
+  Test.SecurityDialogsView in 'Test.SecurityDialogsView.pas' {SecurityDialogsView};
+
+{$R *.res}
+
+begin
+  Application.Initialize;
+  Application.MainFormOnTaskbar := True;
+  Application.CreateForm(TSecurityDialogsView, SecurityDialogsView);
+  Application.Run;
+end.

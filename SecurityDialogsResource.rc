@@ -1,0 +1,6 @@
+TSecurityLogin BITMAP "Resources\\TSecurityLogin.bmp"
+TSecurityChangePassword BITMAP "Resources\\TSecurityChangePassword.bmp"
+TSecurityManage BITMAP "Resources\\TSecurityManage.bmp"
+TSecurityMatrix BITMAP "Resources\\TSecurityMatrix.bmp"
+TSecurityPermission BITMAP "Resources\\TSecurityPermission.bmp"
+TSecurityUser BITMAP "Resources\\TSecurityUser.bmp"

@@ -1,0 +1,45 @@
+unit Security.User;
+
+interface
+
+uses
+   System.SysUtils, System.Classes, Vcl.ExtCtrls, System.UITypes, Vcl.StdCtrls, Vcl.Forms
+     ;
+
+type
+   TSecurityUser = class(TComponent)
+      constructor Create(AOwner: TComponent); override;
+      destructor Destroy; override;
+
+      strict private
+         { Strict private declarations }
+      private
+         { Private declarations }
+      protected
+         { Protected declarations }
+      public
+         { Public declarations }
+      published
+         { Published declarations }
+   end;
+
+implementation
+
+uses
+   Security.Internal;
+
+{ TSecurityManage }
+
+constructor TSecurityUser.Create(AOwner: TComponent);
+begin
+    FView := TSecurityUserView.Create(Screen.FocusedForm);
+   inherited;
+end;
+
+destructor TSecurityUser.Destroy;
+begin
+    FreeAndNil(FView);
+   inherited;
+end;
+
+end.

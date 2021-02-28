@@ -1,0 +1,5 @@
+TSecurityLogin128 BITMAP "Resources\\TSecurityLogin128.bmp"
+TSecurityLogin16 BITMAP "Resources\\TSecurityLogin16.bmp"
+TSecurityLogin24 BITMAP "Resources\\TSecurityLogin24.bmp"
+TSecurityLogin32 BITMAP "Resources\\TSecurityLogin32.bmp"
+TSecurityLogin BITMAP "Resources\\TSecurityLogin.bmp"

@@ -1,0 +1,52 @@
+object SecurityDialogsView: TSecurityDialogsView
+  Left = 0
+  Top = 0
+  Caption = 'SecurityDialogsView'
+  ClientHeight = 264
+  ClientWidth = 634
+  Color = clBtnFace
+  Font.Charset = DEFAULT_CHARSET
+  Font.Color = clWindowText
+  Font.Height = -11
+  Font.Name = 'Tahoma'
+  Font.Style = []
+  OldCreateOrder = False
+  PixelsPerInch = 96
+  TextHeight = 13
+  object LabelLoginResult: TLabel
+    Left = 89
+    Top = 13
+    Width = 34
+    Height = 13
+    Caption = 'Result:'
+    Layout = tlCenter
+  end
+  object ButtonLogin: TButton
+    Left = 8
+    Top = 8
+    Width = 75
+    Height = 25
+    Caption = 'Login'
+    TabOrder = 0
+    OnClick = ButtonLoginClick
+  end
+  object TSecurityLoginView
+    Left = 0
+    Top = 0
+    ClientHeight = 201
+    ClientWidth = 304
+    Color = clBtnFace
+    Font.Charset = DEFAULT_CHARSET
+    Font.Color = clWindowText
+    Font.Height = -11
+    Font.Name = 'Tahoma'
+    Font.Style = []
+    OldCreateOrder = False
+    PixelsPerInch = 96
+    TextHeight = 13
+  end
+  object Login: TSecurityLogin
+    Left = 38
+    Top = 50
+  end
+end

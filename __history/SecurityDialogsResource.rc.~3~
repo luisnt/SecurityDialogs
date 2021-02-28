@@ -1,0 +1,4 @@
+TSecurityLogin128 RCDATA "Resources\\TSecurityLogin128.png"
+TSecurityLogin16 RCDATA "Resources\\TSecurityLogin16.png"
+TSecurityLogin24 RCDATA "Resources\\TSecurityLogin24.png"
+TSecurityLogin32 RCDATA "Resources\\TSecurityLogin32.png"

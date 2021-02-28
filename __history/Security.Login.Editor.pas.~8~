@@ -1,0 +1,36 @@
+unit Security.Login.Editor;
+
+interface
+
+uses Classes, DesignIntf, DesignEditors;
+
+type
+  TSecurityLoginEditor = class(TComponentEditor)
+    procedure ExecuteVerb(Index: Integer); override;
+    function GetVerb(Index: Integer): string; override;
+    function GetVerbCount: Integer; override;
+  end;
+
+implementation
+
+{ TMyComponentEditor }
+
+procedure TSecurityLoginEditor.ExecuteVerb(Index: Integer);
+begin
+  case Index of
+    0:
+      Beep;
+  end;
+end;
+
+function TSecurityLoginEditor.GetVerb(Index: Integer): string;
+begin
+  Result := 'Open';
+end;
+
+function TSecurityLoginEditor.GetVerbCount: Integer;
+begin
+
+end;
+
+end.

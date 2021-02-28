@@ -1,0 +1,371 @@
+unit Security.User.View;
+
+interface
+
+uses
+   Winapi.Windows, Winapi.Messages, System.SysUtils, System.Variants, System.Classes, Vcl.Graphics, System.Hash, Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.StdCtrls,
+   Vcl.Buttons, Vcl.ExtCtrls, Data.DB, Vcl.Grids, Vcl.DBGrids,
+
+   PngSpeedButton, PngFunctions, frxClass, Vcl.Imaging.pngimage;
+
+type
+   TSecurityUserView = class(TForm)
+      ShapeBodyRight: TShape;
+      ShapeBodyLeft: TShape;
+      ImageLogo: TImage;
+      PanelTitle: TPanel;
+      ShapePanelTitleBottom: TShape;
+      ShapePanelTitleRight: TShape;
+      ShapePanelTitleLeft: TShape;
+      ShapePanelTitleTop: TShape;
+      PanelTitleBackgroung: TPanel;
+      PanelTitleLabelAutenticacao: TLabel;
+      PanelTitleDOT: TLabel;
+      PanelTitleLabelAppName: TLabel;
+      PanelTitleAppInfo: TPanel;
+      PanelTitleAppInfoVersion: TPanel;
+      PanelTitleAppInfoVersionValue: TLabel;
+      PanelTitleAppInfoVersionCaption: TLabel;
+      PanelTitleAppInfoUpdated: TPanel;
+      PanelTitleAppInfoUpdatedValue: TLabel;
+      PanelTitleAppInfoUpdatedCaption: TLabel;
+      PanelStatus: TPanel;
+      PanelStatusShapeLeft: TShape;
+      PanelStatusShapeRight: TShape;
+      PanelStatusShapeBottom: TShape;
+      PanelStatusBackground: TPanel;
+      LabelIPServerCaption: TLabel;
+      LabelIPComputerValue: TLabel;
+      PanelStatusBackgroundClient: TPanel;
+      LabelIPComputerCaption: TLabel;
+      LabelIPServerValue: TLabel;
+      PanelToolbar: TPanel;
+      ShapeToolbarTop: TShape;
+      PngSpeedButtonOk: TPngSpeedButton;
+      PngSpeedButtonCancelar: TPngSpeedButton;
+      ShapeToolbarLeft: TShape;
+      ShapeToolbarRight: TShape;
+      ShapeToolbarBottom: TShape;
+      DataSourceUser: TDataSource;
+      LabelTableStatus: TLabel;
+    LabelID: TLabel;
+      LabelPassword: TLabel;
+    LabelEmail: TLabel;
+      PanelID: TPanel;
+      PanelImageID: TPanel;
+      EditID: TEdit;
+      EditCreatedAt: TEdit;
+      PanelName: TPanel;
+      PanelImageName: TPanel;
+      ImageName: TImage;
+      PanelImageNameError: TPanel;
+      ImageNameError: TImage;
+      EditName: TEdit;
+      PanelEmail: TPanel;
+      PanelImageEmail: TPanel;
+      ImageEmail: TImage;
+      PanelImageEmailError: TPanel;
+      ImageEmailError: TImage;
+      EditEmail: TEdit;
+    LabelSenha: TLabel;
+      PanelEditPassword: TPanel;
+      PanelImagePassword: TPanel;
+      ImagePassword: TImage;
+      PanelImagePasswordError: TPanel;
+      ImagePasswordError: TImage;
+      EditPassword: TEdit;
+    LabelMatrix: TLabel;
+      PanelMatrixID: TPanel;
+      PanelImageEditMatrixID: TPanel;
+      PanelImageMatrixIDError: TPanel;
+      ImageMatrixIDError: TImage;
+      EditMatrixID: TEdit;
+      DataSourceMatrix: TDataSource;
+      EditMatrixName: TEdit;
+      PanelImageCombo: TPanel;
+      ImageCombo: TImage;
+      ImageEditMatrixID: TImage;
+      PanelMatrix: TPanel;
+      shp2: TShape;
+      shp3: TShape;
+      shp4: TShape;
+      DBGridMatrix: TDBGrid;
+      Panel1: TPanel;
+      Shape1: TShape;
+      PngSpeedButtonComboOK: TPngSpeedButton;
+      PngSpeedButtonComboCancel: TPngSpeedButton;
+      Shape2: TShape;
+      Shape3: TShape;
+      Shape4: TShape;
+      CheckBoxActive: TCheckBox;
+      Panel2: TPanel;
+      Shape6: TShape;
+      Shape7: TShape;
+      Shape8: TShape;
+      Label2: TLabel;
+      procedure PngSpeedButtonCancelarClick(Sender: TObject);
+      procedure PngSpeedButtonOkClick(Sender: TObject);
+      procedure EditMatrixIDChange(Sender: TObject);
+      procedure ImageEditMatrixIDClick(Sender: TObject);
+      procedure FormKeyDown(Sender: TObject; var Key: Word; Shift: TShiftState);
+      procedure FormCreate(Sender: TObject);
+      procedure PngSpeedButtonComboOKClick(Sender: TObject);
+      procedure PngSpeedButtonComboCancelClick(Sender: TObject);
+      procedure EditMatrixIDEnter(Sender: TObject);
+      procedure FormShow(Sender: TObject);
+      private
+         { Private declarations }
+      public
+         { Public declarations }
+   end;
+
+var
+   SecurityUserView: TSecurityUserView;
+
+implementation
+
+{$R *.dfm}
+
+{ ----------  AUXs -> --------------------- }
+{$REGION 'AUXs'}
+
+
+type
+   THackedDBGrid     = class(TDBGrid);
+   THackedCustomGrid = class(TCustomGrid);
+
+procedure auxAutoSizeLastColumn(const aDBGrid: TDBGrid);
+var
+   DrawInfo : TGridDrawInfo;
+   LColNo   : integer;
+   LColCount: integer;
+   i        : integer;
+begin
+   with THackedCustomGrid(aDBGrid) do
+   begin
+      LColCount := 0;
+      for i     := 0 to Pred(aDBGrid.Columns.Count) do
+         if aDBGrid.Columns.Items[i].Visible then
+            Inc(LColCount);
+
+      LColNo := LColCount - 1;
+      CalcDrawInfo(DrawInfo);
+      if (DrawInfo.Horz.LastFullVisibleCell < LColNo - 1) then
+         Exit;
+
+      if (DrawInfo.Horz.LastFullVisibleCell < LColNo) then
+         ColWidths[LColNo] := DrawInfo.Horz.GridBoundary - DrawInfo.Horz.FullVisBoundary
+      else
+         ColWidths[LColNo] := ColWidths[LColNo] + DrawInfo.Horz.GridExtent - DrawInfo.Horz.FullVisBoundary
+   end;
+end;
+
+function auxEmpty(const aValue: string): boolean;
+begin
+   Result :=
+     (
+      (Length(aValue.Trim) = 0)
+        or
+        (aValue = format('  %s  %s    ', [TFormatSettings.Create.DateSeparator, TFormatSettings.Create.DateSeparator]))
+        or
+        (aValue = format('    %s  %s  ', [TFormatSettings.Create.DateSeparator, TFormatSettings.Create.DateSeparator]))
+        or
+        (aValue = '  -  -    ') or (aValue = '    -  -  ')
+        or
+        (aValue = '  .  .    ') or (aValue = '    .  .  ')
+        or
+        (aValue = '  /  /    ') or (aValue = '    /  /  ')
+     );
+end;
+
+function auxIsEmpty(aValue: string): boolean;
+begin
+   Result := auxEmpty(aValue);
+end;
+
+function auxTrimInOut(value: string): string;
+var
+   cont: integer;
+begin
+   while True do
+   begin
+      cont  := Length(value);
+      value := StringReplace(value, #32#32, #32, [rfReplaceAll, rfIgnoreCase]);
+      if cont = Length(value) then
+         Break;
+   end;
+   Result := Trim(value);
+end;
+
+function auxUppercaseTrim(const aValue: string): string;
+begin
+   Result := auxTrimInOut(UpperCase(aValue));
+end;
+
+function auxMD5(const aValue: string; aUpperCase: boolean = True): string;
+begin
+   Result := System.Hash.THashMD5.GetHashString(aValue);
+   if aUpperCase then
+      Result := UpperCase(Result);
+end;
+{$ENDREGION}
+{ ---------- <- AUXs  --------------------- }
+
+procedure TSecurityUserView.EditMatrixIDChange(Sender: TObject);
+begin
+   PanelImageMatrixIDError.Visible := false;
+   if not SameStr(EditMatrixID.Text, DataSourceMatrix.DataSet.FieldByName('matrix_id').AsString) then
+      if DataSourceMatrix.DataSet.Locate('matrix_id', EditMatrixID.Text, []) then
+         EditMatrixName.Text := DataSourceMatrix.DataSet.FieldByName('name').AsString
+      else
+         EditMatrixName.Clear;
+end;
+
+procedure TSecurityUserView.EditMatrixIDEnter(Sender: TObject);
+begin
+   if SameStr(EditMatrixID.Text, EmptyStr) then
+      PngSpeedButtonComboOK.Click;
+end;
+
+procedure TSecurityUserView.FormCreate(Sender: TObject);
+begin
+   PanelMatrix.Visible := false;
+   PanelMatrix.Left    := 154;
+   PanelMatrix.BringToFront;
+end;
+
+procedure TSecurityUserView.FormKeyDown(Sender: TObject; var Key: Word; Shift: TShiftState);
+begin
+   case Key of
+      VK_F2:
+         begin
+            if ActiveControl = EditMatrixID then
+            begin
+               PngSpeedButtonComboOK.Click;
+               Key := VK_CANCEL;
+            end;
+         end;
+      VK_UP:
+         begin
+            if ActiveControl = EditMatrixID then
+            begin
+               if PanelMatrix.Visible then
+                  if DataSourceMatrix.DataSet.Bof then
+                     DataSourceMatrix.DataSet.Last
+                  else
+                     DataSourceMatrix.DataSet.Prior;
+               Key := VK_CANCEL;
+            end;
+         end;
+      VK_DOWN:
+         begin
+            if ActiveControl = EditMatrixID then
+            begin
+               if PanelMatrix.Visible then
+                  if DataSourceMatrix.DataSet.Eof then
+                     DataSourceMatrix.DataSet.First
+                  else
+                     DataSourceMatrix.DataSet.Next;
+               Key := VK_CANCEL;
+            end;
+         end;
+      VK_RETURN:
+         begin
+            if ActiveControl = EditMatrixID then
+            begin
+               if SameStr(EditMatrixID.Text, EmptyStr) and (not PanelMatrix.Visible) then
+                  PngSpeedButtonComboOK.Click
+               else if not SameStr(EditMatrixID.Text, EmptyStr) then
+                  SelectNext(ActiveControl, True, True);
+            end
+            else if ActiveControl = EditPassword then
+               PngSpeedButtonOk.Click
+            else
+               SelectNext(ActiveControl, True, True);
+            Key := VK_CANCEL;
+         end;
+      VK_ESCAPE:
+         begin
+            if ActiveControl = EditMatrixID then
+            begin
+               if not PanelMatrix.Visible then
+                  PngSpeedButtonComboCancel.Click;
+            end;
+            Key := VK_CANCEL;
+         end;
+
+   end;
+end;
+
+procedure TSecurityUserView.FormShow(Sender: TObject);
+begin
+   auxAutoSizeLastColumn(DBGridMatrix);
+   PanelMatrix.BringToFront;
+end;
+
+procedure TSecurityUserView.ImageEditMatrixIDClick(Sender: TObject);
+begin
+   PanelMatrix.Visible := not PanelMatrix.Visible;
+end;
+
+procedure TSecurityUserView.PngSpeedButtonCancelarClick(Sender: TObject);
+begin
+   ModalResult := mrCancel;
+end;
+
+procedure TSecurityUserView.PngSpeedButtonComboCancelClick(Sender: TObject);
+begin
+   PanelMatrix.Visible := false;
+end;
+
+procedure TSecurityUserView.PngSpeedButtonComboOKClick(Sender: TObject);
+begin
+   EditMatrixID.Text   := DataSourceMatrix.DataSet.FieldByName('matrix_id').AsString;
+   EditMatrixName.Text := DataSourceMatrix.DataSet.FieldByName('name').AsString;
+   PanelMatrix.Visible := false;
+end;
+
+procedure TSecurityUserView.PngSpeedButtonOkClick(Sender: TObject);
+   procedure canValidate(const aControl: TWinControl; const aTest: boolean; const aMessageErroTestFalse: string; const aPanelImageError: TPanel; const aImageError: TImage);
+   begin
+      aImageError.Hint         := aMessageErroTestFalse;
+      aPanelImageError.Visible := aTest;
+
+      if aTest then
+      begin
+         aControl.SetFocus;
+         Abort;
+      end;
+   end;
+
+var
+   LMatrixID:
+     integer;
+begin
+   // Validações
+   canValidate(EditName, auxIsEmpty(EditName.Text), 'Informe o [Nome].', PanelImageNameError, ImageNameError);
+   canValidate(EditEmail, auxIsEmpty(EditEmail.Text), 'Informe o [Email].', PanelImageEmailError, ImageEmailError);
+   canValidate(EditPassword, auxIsEmpty(EditPassword.Text) and (DataSourceUser.DataSet.State = dsInsert), 'Informe a [Senha].', PanelImagePasswordError, ImagePasswordError);
+   canValidate(EditMatrixID, auxIsEmpty(EditMatrixID.Text), 'Informe a [Matrix] com as permissões iniciais.', PanelImageMatrixIDError, ImageMatrixIDError);
+
+   canValidate(EditMatrixID, not TryStrToInt(EditMatrixID.Text, LMatrixID), 'Informe a [Matrix] com as permissões iniciais.', PanelImageMatrixIDError, ImageMatrixIDError);
+
+   // Atricuições
+   with DataSourceUser.DataSet do
+   begin
+      FieldByName('name').AsString  := auxTrimInOut(EditName.Text);
+      FieldByName('email').AsString := auxTrimInOut(EditEmail.Text);
+
+      if not auxIsEmpty(EditPassword.Text) then
+         FieldByName('password').AsString := auxMD5(auxUppercaseTrim(EditPassword.Text));
+
+      FieldByName('matrix_id').AsInteger := LMatrixID;
+      FieldByName('is_matrix').AsBoolean := false;
+      FieldByName('active').AsBoolean    := CheckBoxActive.Checked;
+      Post;
+   end;
+
+   ModalResult := mrOk;
+end;
+
+end.

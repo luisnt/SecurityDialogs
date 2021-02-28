@@ -1,0 +1,60 @@
+package SecurityDialogs;
+
+{$R *.res}
+{$R *.dres}
+{$IFDEF IMPLICITBUILDING This IFDEF should not be used by users}
+{$ALIGN 8}
+{$ASSERTIONS ON}
+{$BOOLEVAL OFF}
+{$DEBUGINFO OFF}
+{$EXTENDEDSYNTAX ON}
+{$IMPORTEDDATA ON}
+{$IOCHECKS ON}
+{$LOCALSYMBOLS OFF}
+{$LONGSTRINGS ON}
+{$OPENSTRINGS ON}
+{$OPTIMIZATION ON}
+{$OVERFLOWCHECKS OFF}
+{$RANGECHECKS OFF}
+{$REFERENCEINFO OFF}
+{$SAFEDIVIDE OFF}
+{$STACKFRAMES OFF}
+{$TYPEDADDRESS OFF}
+{$VARSTRINGCHECKS ON}
+{$WRITEABLECONST OFF}
+{$MINENUMSIZE 1}
+{$IMAGEBASE $400000}
+{$DEFINE RELEASE}
+{$ENDIF IMPLICITBUILDING}
+{$DESCRIPTION 'Security Dialogs by Luis Nt'}
+{$LIBSUFFIX AUTO}
+{$IMPLICITBUILD ON}
+
+requires
+  rtl,
+  vclx,
+  vcl,
+  vclimg,
+  dbrtl,
+  RTL_DCL_PngComponents_Sydney;
+
+contains
+  Security.Internal in 'Security.Internal.pas',
+  Security.Login.Interfaces in 'Login\Security.Login.Interfaces.pas',
+  Security.Login.View in 'Login\Security.Login.View.pas' {SecurityLoginView},
+  Security.Login in 'Security.Login.pas',
+  Security.ChangePassword.Interfaces in 'ChangePassword\Security.ChangePassword.Interfaces.pas',
+  Security.ChangePassword.View in 'ChangePassword\Security.ChangePassword.View.pas' {SecurityChangePasswordView},
+  Security.ChangePassword in 'Security.ChangePassword.pas',
+  Security.Permission in 'Security.Permission.pas',
+  Security.Manage in 'Security.Manage.pas',
+  Security.Permission.Interfaces in 'Permission\Security.Permission.Interfaces.pas',
+  Security.Permission.View in 'Permission\Security.Permission.View.pas' {SecurityPermissionView},
+  Security.Matrix in 'Security.Matrix.pas',
+  Security.User in 'Security.User.pas',
+  Security.Matrix.Interfaces in 'Matrix\Security.Matrix.Interfaces.pas',
+  Security.Matrix.View in 'Matrix\Security.Matrix.View.pas' {SecurityMatrixView},
+  RegisterSecurityDialogs in 'RegisterSecurityDialogs.pas';
+
+end.
+

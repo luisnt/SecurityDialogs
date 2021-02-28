@@ -1,0 +1,366 @@
+unit Security.Matrix.View;
+
+interface
+
+uses
+  Winapi.Windows, Winapi.Messages, System.SysUtils, System.Variants, System.Classes, Vcl.Graphics, Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.StdCtrls, Vcl.Buttons,
+  Vcl.ExtCtrls, Vcl.Imaging.pngimage, Vcl.Imaging.jpeg, System.StrUtils,
+
+  PngSpeedButton, PngFunctions
+
+    , Security.Matrix.Interfaces
+    ;
+
+type
+  TSecurityMatrixView = class(TForm, iMatrixView, iPrivateMatrixEvents, iMatrixViewEvents)
+    CheckBoxActive: TCheckBox;
+    EditCreatedAt: TEdit;
+    EditEmail: TEdit;
+    EditID: TEdit;
+    EditName: TEdit;
+    ImageID: TImage;
+    ImageLogo: TImage;
+    ImageName: TImage;
+    ImageNameError: TImage;
+    ImageNewPassword: TImage;
+    LabelAtivo: TLabel;
+    LabelEmail: TLabel;
+    LabelID: TLabel;
+    LabelIPComputerCaption: TLabel;
+    LabelIPComputerValue: TLabel;
+    LabelIPServerCaption: TLabel;
+    LabelIPServerValue: TLabel;
+    LabelPassword: TLabel;
+    LabelTableStatus: TLabel;
+    Panel1: TPanel;
+    Panel2: TPanel;
+    PanelEmail: TPanel;
+    PanelFundo: TPanel;
+    PanelImageEmail: TPanel;
+    PanelImageNameError: TPanel;
+    PanelImagePassword: TPanel;
+    PanelName: TPanel;
+    PanelStatus: TPanel;
+    PanelStatusBackground: TPanel;
+    PanelStatusBackgroundClient: TPanel;
+    PanelStatusShapeBottom: TShape;
+    PanelStatusShapeLeft: TShape;
+    PanelStatusShapeRight: TShape;
+    PanelTitle: TPanel;
+    PanelTitleAppInfo: TPanel;
+    PanelTitleAppInfoUpdated: TPanel;
+    PanelTitleAppInfoUpdatedCaption: TLabel;
+    PanelTitleAppInfoUpdatedValue: TLabel;
+    PanelTitleAppInfoVersion: TPanel;
+    PanelTitleAppInfoVersionCaption: TLabel;
+    PanelTitleAppInfoVersionValue: TLabel;
+    PanelTitleBackgroung: TPanel;
+    PanelTitleDOT: TLabel;
+    PanelTitleLabelAutenticacao: TLabel;
+    PanelTitleLabelSigla: TLabel;
+    PanelToolbar: TPanel;
+    PngSpeedButtonCancelar: TPngSpeedButton;
+    PngSpeedButtonOk: TPngSpeedButton;
+    ShapeBodyLeft: TShape;
+    ShapeBodyRight: TShape;
+    ShapePanelTitleBottom: TShape;
+    ShapePanelTitleLeft: TShape;
+    ShapePanelTitleRight: TShape;
+    ShapePanelTitleTop: TShape;
+    ShapeToolbarBottom: TShape;
+    ShapeToolbarLeft: TShape;
+    ShapeToolbarRight: TShape;
+    ShapeToolbarTop: TShape;
+
+    procedure PngSpeedButtonCancelarClick(Sender: TObject);
+    procedure PngSpeedButtonOkClick(Sender: TObject);
+    procedure EditNameChange(Sender: TObject);
+    procedure FormClose(Sender: TObject; var Action: TCloseAction);
+    procedure FormKeyDown(Sender: TObject; var Key: Word; Shift: TShiftState);
+
+  strict private
+    FID           : Int64;
+    FUpdatedAt    : TDateTime;
+    FNameMatrix   : String;
+    FEmail        : String;
+    FActive       : Boolean;
+    FPassword     : String;
+    FMatrixID     : Integer;
+    FIsMatrix     : Boolean;
+    FChangedMatrix: Boolean;
+
+    FOnMatrix: TMatrixNotifyEvent;
+    FOnResult: TResultNotifyEvent;
+
+    { Strict private declarations }
+
+    procedure setID(Value: Int64);
+    function getID: Int64;
+
+    function getUpdatedAt: TDateTime;
+    procedure setUpdatedAt(const Value: TDateTime);
+
+    procedure setNameMatrix(Value: String);
+    function getNameMatrix: String;
+
+    procedure setEmail(Value: String);
+    function getEmail: String;
+
+    procedure setActive(Value: Boolean);
+    function getActive: Boolean;
+
+    procedure setPassword(Value: String);
+    function getPassword: String;
+
+    procedure setMatrixID(Value: Integer);
+    function getMatrixID: Integer;
+
+    procedure setIsMatrix(Value: Boolean);
+    function getIsMatrix: Boolean;
+
+    procedure setOnMatrix(const Value: TMatrixNotifyEvent);
+    function getOnMatrix: TMatrixNotifyEvent;
+
+    procedure setOnResult(const Value: TResultNotifyEvent);
+    function getOnResult: TResultNotifyEvent;
+  private
+    { Private declarations }
+    procedure Validate;
+    procedure doMatrix;
+    procedure doResult;
+  public
+    { Public declarations }
+    function Events: iMatrixViewEvents;
+
+  published
+    { Published declarations - Properties }
+    property ID        : Int64 read getID write setID;
+    property UpdatedAt : TDateTime read getUpdatedAt write setUpdatedAt;
+    property NameMatrix: String read getNameMatrix write setNameMatrix;
+    property Email     : String read getEmail write setEmail;
+    property Active    : Boolean read getActive write setActive;
+    property Password  : String read getPassword write setPassword;
+    property MatrixID  : Integer read getMatrixID write setMatrixID;
+    property IsMatrix  : Boolean read getIsMatrix write setIsMatrix;
+
+    { Published declarations - Events }
+    property OnMatrix: TMatrixNotifyEvent read getOnMatrix write setOnMatrix;
+    property OnResult: TResultNotifyEvent read getOnResult write setOnResult;
+  end;
+
+var
+  SecurityMatrixView: TSecurityMatrixView;
+
+implementation
+
+uses
+  Security.Internal;
+
+{$R *.dfm}
+
+{ TSecurityMatrixView }
+
+{ Published declarations - Properties }
+
+procedure TSecurityMatrixView.setID(Value: Int64);
+begin
+  FID                      := Value;
+  FView.ID                 := Value;
+  LabelTableStatus.Caption := IFThen(Value = 0, 'Criando', 'Editando');
+end;
+
+function TSecurityMatrixView.getID: Int64;
+begin
+  Result := FID;
+end;
+
+procedure TSecurityMatrixView.setNameMatrix(Value: String);
+begin
+  FNameMatrix   := Value;
+  EditName.Text := FNameMatrix;
+end;
+
+function TSecurityMatrixView.getNameMatrix: String;
+begin
+  Result := FNameMatrix;
+end;
+
+procedure TSecurityMatrixView.setEmail(Value: String);
+begin
+  FEmail         := Value;
+  EditEmail.Text := FEmail;
+end;
+
+function TSecurityMatrixView.getEmail: String;
+begin
+  Result := FEmail;
+end;
+
+procedure TSecurityMatrixView.setActive(Value: Boolean);
+begin
+  FActive                := Value;
+  CheckBoxActive.Checked := FActive;
+end;
+
+function TSecurityMatrixView.getActive: Boolean;
+begin
+  Result := FActive;
+end;
+
+procedure TSecurityMatrixView.setPassword(Value: String);
+begin
+  FPassword := Value;
+end;
+
+function TSecurityMatrixView.getPassword: String;
+begin
+  Result := FPassword;
+end;
+
+procedure TSecurityMatrixView.setUpdatedAt(const Value: TDateTime);
+begin
+  FUpdatedAt         := Value;
+  EditCreatedAt.Text := IFThen(FUpdatedAt = 0, '', FormatDateTime('dd.mm.yyyy HH:mm', FUpdatedAt));
+end;
+
+function TSecurityMatrixView.getUpdatedAt: TDateTime;
+begin
+  Result := FUpdatedAt;
+end;
+
+procedure TSecurityMatrixView.setMatrixID(Value: Integer);
+begin
+  FMatrixID := Value;
+end;
+
+function TSecurityMatrixView.getMatrixID: Integer;
+begin
+  Result := FMatrixID;
+end;
+
+procedure TSecurityMatrixView.setIsMatrix(Value: Boolean);
+begin
+  FIsMatrix := Value;
+end;
+
+function TSecurityMatrixView.getIsMatrix: Boolean;
+begin
+  Result := FIsMatrix;
+end;
+
+{ Published declarations - Events }
+
+procedure TSecurityMatrixView.setOnMatrix(const Value: TMatrixNotifyEvent);
+begin
+  FOnMatrix := Value;
+end;
+
+function TSecurityMatrixView.getOnMatrix: TMatrixNotifyEvent;
+begin
+  Result := FOnMatrix;
+end;
+
+procedure TSecurityMatrixView.setOnResult(const Value: TResultNotifyEvent);
+begin
+  FOnResult := Value;
+end;
+
+function TSecurityMatrixView.getOnResult: TResultNotifyEvent;
+begin
+  Result := FOnResult;
+end;
+
+procedure TSecurityMatrixView.Validate;
+begin
+  // Validações
+  Internal.Validate(EditName, Internal.IsEmpty(EditName.Text), 'Informe o [Nome].', PanelImageNameError, ImageNameError);
+end;
+
+procedure TSecurityMatrixView.doMatrix;
+var
+  LError: string;
+  LKey  : string;
+begin
+  SelectFirst;
+  Validate;
+
+  LKey := EditName.Text + EditEmail.Text + DateTimeToStr(now);
+
+  FNameMatrix := EditName.Text;
+  FEmail      := EditEmail.Text;
+  FActive     := CheckBoxActive.Checked;
+  FPassword   := Internal.MD5(LKey);
+  FMatrixID   := 0;
+  FIsMatrix   := true;
+
+  LError         := EmptyStr;
+  FChangedMatrix := False;
+
+  OnMatrix(ID, NameMatrix, Email, Active, Password, MatrixID, IsMatrix, LError, FChangedMatrix);
+
+  Internal.Die(LError);
+  if FChangedMatrix then
+    Close;
+end;
+
+procedure TSecurityMatrixView.doResult;
+begin
+  try
+    if not Assigned(FOnResult) then
+      Exit;
+
+    FOnResult(FChangedMatrix);
+  finally
+    Application.NormalizeAllTopMosts;
+    BringToFront;
+  end;
+end;
+
+procedure TSecurityMatrixView.EditNameChange(Sender: TObject);
+var
+  LNome: string;
+begin
+  LNome := EditName.Text;
+  LNome := StringReplace(Trim(Internal.RemoveAcento(LNome)), ' ', '_', [rfReplaceAll, rfIgnoreCase]);
+  if SameStr(LNome, EmptyStr) then
+    LNome        := 'nao_informado';
+  EditEmail.Text := LowerCase(LNome) + '@matrix&.com';
+end;
+
+function TSecurityMatrixView.Events: iMatrixViewEvents;
+begin
+  Result := Self;
+end;
+
+procedure TSecurityMatrixView.FormClose(Sender: TObject; var Action: TCloseAction);
+begin
+  Application.RestoreTopMosts;
+  doResult;
+end;
+
+procedure TSecurityMatrixView.FormKeyDown(Sender: TObject; var Key: Word; Shift: TShiftState);
+begin
+  case Key of
+    VK_RETURN:
+      begin
+        if ActiveControl = CheckBoxActive then
+          PngSpeedButtonOk.Click
+        else
+          SelectNext(ActiveControl, true, true);
+        Key := VK_CANCEL;
+      end;
+  end;
+end;
+
+procedure TSecurityMatrixView.PngSpeedButtonOkClick(Sender: TObject);
+begin
+  doMatrix;
+end;
+
+procedure TSecurityMatrixView.PngSpeedButtonCancelarClick(Sender: TObject);
+begin
+  FChangedMatrix := False;
+  Close;
+end;
+
+end.

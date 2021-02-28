@@ -1,0 +1,58 @@
+unit Test.SecurityDialogsView;
+
+interface
+
+uses
+  Winapi.Windows, Winapi.Messages, System.SysUtils, System.Variants, System.Classes, Vcl.Graphics,
+  Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.StdCtrls,
+
+  Security.Login, Security.Login.View;
+
+type
+  TSecurityDialogsView = class(TForm)
+    ButtonLogin: TButton;
+    LabelLoginResult: TLabel;
+    procedure ButtonLoginClick(Sender: TObject);
+    procedure LoginAuth(const aEmail, aPassword: string; var aIsAuth: Boolean; var aEmailError, aPasswordError: string);
+  private
+    { Private declarations }
+  public
+    { Public declarations }
+  end;
+
+var
+  SecurityDialogsView: TSecurityDialogsView;
+
+implementation
+
+{$R *.dfm}
+
+
+procedure TSecurityDialogsView.ButtonLoginClick(Sender: TObject);
+var
+  LResult: Boolean;
+begin
+  LabelLoginResult.Caption := 'Result: ';
+  LResult := Login.execute;
+  LabelLoginResult.Caption := LabelLoginResult.Caption + BoolToStr(LResult, true);
+end;
+
+procedure TSecurityDialogsView.LoginAuth(const aEmail, aPassword: string; var aIsAuth: Boolean; var aEmailError, aPasswordError: string);
+begin
+  aEmailError    := EmptyStr;
+  aPasswordError := EmptyStr;
+
+  if not SameStr(aEmail, 'luisnt') then
+    aEmailError := 'Usuário inválido';
+
+  if not SameStr(aPassword, '7ujkl05') then
+    aPasswordError := 'Senha inválido';
+
+  aIsAuth := SameStr(aEmailError + aPasswordError, EmptyStr);
+end;
+
+initialization
+
+ReportMemoryLeaksOnShutdown := true;
+
+end.

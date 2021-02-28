@@ -1,0 +1,14 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<BorlandProject>
+	<Transactions>
+    <Transaction>2021/01/12 22:23:44.000.754,=rtl.dcp</Transaction>
+    <Transaction>2021/01/12 22:24:28.000.210,C:\Users\Luis\Projects\Lib\SecurityDialogs\SecurityDialogsEditor.dproj=C:\Users\Luis\Projects\App\Package1.dproj</Transaction>
+    <Transaction>2021/01/12 22:24:41.000.953,=C:\Users\Luis\Projects\Lib\SecurityDialogs\Unit1.pas</Transaction>
+    <Transaction>2021/01/12 22:24:55.000.066,C:\Users\Luis\Projects\Lib\SecurityDialogs\Security.Login.Editor.pas=C:\Users\Luis\Projects\Lib\SecurityDialogs\Unit1.pas</Transaction>
+    <Transaction>2021/01/12 22:54:51.000.747,=C:\Users\Luis\Projects\Lib\SecurityDialogs\Unit1.pas</Transaction>
+    <Transaction>2021/01/12 22:55:31.000.685,C:\Users\Luis\Projects\Lib\SecurityDialogs\Unit1.pas=C:\Users\Luis\Projects\Lib\SecurityDialogs\RegisterSecurityDialogsEditors.pas</Transaction>
+    <Transaction>2021/01/12 23:02:26.000.431,=RTL_DCL_PngComponents_Sydney.dcp</Transaction>
+    <Transaction>2021/01/12 23:02:26.000.481,=SecurityDialogs.dcp</Transaction>
+    <Transaction>2021/01/12 23:11:21.000.951,C:\Users\Luis\Projects\Lib\SecurityDialogs\Security.Login.Editor.pas=</Transaction>
+  </Transactions>
+</BorlandProject>

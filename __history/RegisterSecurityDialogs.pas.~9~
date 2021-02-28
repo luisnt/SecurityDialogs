@@ -1,0 +1,40 @@
+unit RegisterSecurityDialogs;
+
+interface
+
+uses
+  TypInfo, System.Classes
+  {$IFDEF Win32}
+    , DesignIntf;
+{$ENDIF}
+procedure Register;
+
+implementation
+
+{$R .\Security.Login.dcr}
+
+
+uses
+  Security.Login
+  {$IFDEF Win32 }
+    , Security.Login.Editor
+  {$ENDIF}
+    ;
+
+const
+  SPageName = 'Security Dialogs';
+
+procedure Register;
+begin
+  // Register all components
+  RegisterComponents(SPageName, [
+    TSecurityLogin
+    ]);
+
+  {$IFDEF Win32 }
+  // Register components Editors
+  RegisterComponentEditor(TSecurityLogin, TSecurityLoginEditor);
+  {$ENDIF}
+end;
+
+end.

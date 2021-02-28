@@ -1,0 +1,96 @@
+unit Security.Matrix.Interfaces;
+
+interface
+
+Type
+   TMatrixNotifyEvent = procedure(aID: Int64; aName: String; aEmail: String; aActive: Boolean; aPassword: String; aMatrixID: Integer; aIsMatrix: Boolean; var aError: string; var aChanged: Boolean) of Object;
+   TResultNotifyEvent = procedure(const aResult: Boolean = false) of Object;
+
+Type
+   iPrivateMatrixEvents = interface
+      ['{3433EF90-2768-4198-85F8-0F9E97324AB8}']
+      { Strict private declarations }
+      procedure setID(Value: Int64);
+      function getID: Int64;
+
+      function getUpdatedAt: TDateTime;
+      procedure setUpdatedAt(const Value: TDateTime);
+
+      procedure setNameMatrix(Value: String);
+      function getNameMatrix: String;
+
+      procedure setEmail(Value: String);
+      function getEmail: String;
+
+      procedure setActive(Value: Boolean);
+      function getActive: Boolean;
+
+      procedure setPassword(Value: String);
+      function getPassword: String;
+
+      procedure setMatrixID(Value: Integer);
+      function getMatrixID: Integer;
+
+      procedure setIsMatrix(Value: Boolean);
+      function getIsMatrix: Boolean;
+
+      procedure setOnMatrix(const Value: TMatrixNotifyEvent);
+      function getOnMatrix: TMatrixNotifyEvent;
+
+      procedure setOnResult(const Value: TResultNotifyEvent);
+      function getOnResult: TResultNotifyEvent;
+   end;
+
+   iMatrixViewEvents = interface(iPrivateMatrixEvents)
+      ['{9047BD6E-6181-49F0-95CD-123155EC0EA9}']
+      { Published declarations - Properties }
+      property ID: Int64 read getID write setID;
+      property UpdatedAt: TDateTime read getUpdatedAt write setUpdatedAt;
+      property NameMatrix: String read getNameMatrix write setNameMatrix;
+      property Email: String read getEmail write setEmail;
+      property Active: Boolean read getActive write setActive;
+      property Password: String read getPassword write setPassword;
+      property MatrixID: Integer read getMatrixID write setMatrixID;
+      property IsMatrix: Boolean read getIsMatrix write setIsMatrix;
+
+      { Published declarations - Events }
+      property OnMatrix: TMatrixNotifyEvent read getOnMatrix write setOnMatrix;
+      property OnResult: TResultNotifyEvent read getOnResult write setOnResult;
+   end;
+
+   iPrivateMatrixViewProperties = interface
+      ['{DCE42688-962D-4AA4-B719-7058C8714386}']
+      { Private declarations }
+      function getComputerIP: string;
+      function getServerIP: string;
+      function getSigla: string;
+      function getUpdatedAt: string;
+      function getVersion: string;
+
+      procedure setComputerIP(const Value: string);
+      procedure setServerIP(const Value: string);
+      procedure setSigla(const Value: string);
+      procedure setUpdatedAt(const Value: string);
+      procedure setVersion(const Value: string);
+   end;
+
+   iMatrixViewProperties = interface(iPrivateMatrixViewProperties)
+      ['{9047BD6E-6181-49F0-95CD-123155EC0EA9}']
+      { Public declarations }
+
+      property ComputerIP: string read getComputerIP write setComputerIP;
+      property ServerIP: string read getServerIP write setServerIP;
+      property Sigla: string read getSigla write setSigla;
+      property Version: string read getVersion write setVersion;
+      property UpdatedAt: string read getUpdatedAt write setUpdatedAt;
+   end;
+
+   iMatrixView = interface
+      ['{87FEC43E-4C47-47D7-92F6-E0B6A532E49D}']
+      // function Properties: iPermissionViewProperties;
+      function Events: iMatrixViewEvents;
+   end;
+
+implementation
+
+end.

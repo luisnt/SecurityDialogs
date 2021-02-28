@@ -1,0 +1,231 @@
+unit Security.Internal;
+
+interface
+
+uses
+  Vcl.Controls, Vcl.ExtCtrls, System.SysUtils, Vcl.StdCtrls, System.Hash
+
+    , Security.Login.Interfaces
+    , Security.ChangePassword.Interfaces
+    , Security.Permission.Interfaces
+    , Security.Matrix.Interfaces
+    ;
+
+type
+  Internal = class
+
+  private
+
+  public
+    class function RemoveAcento(const aValue: string): String;
+    class function TrimInOut(aValue: string): string;
+    class function UpperTrim(const aValue: string): string;
+    class function Empty(const aValue: string): boolean;
+    class function IsEmpty(aValue: string): boolean;
+    class function MD5(const aValue: string; aUpperCase: boolean = True): string;
+
+    class procedure Die(aMessage: string);
+
+    class procedure Required(const aValue: Int64; const aError: string = ''); overload;
+    class procedure Required(const aValue: string; const aError: string = ''); overload;
+    class procedure Required(const aControl: TWinControl; const aValue: string); overload;
+    class procedure Required(const aControl: TWinControl; const aValue: string; const aError: string); overload;
+
+    class procedure Required(const aValue: TResultNotifyEvent; const aError: string = 'O evento de Retorno não foi definido.'); overload;
+    class procedure Required(const aValue: TAuthNotifyEvent; const aError: string = 'O evento de Login não foi definido.'); overload;
+    class procedure Required(const aValue: TChangePasswordNotifyEvent; const aError: string = 'O evento de Alteração de Senha não foi definido.'); overload;
+    class procedure Required(const aValue: TPermissionNotifyEvent; const aError: string = 'O evento de Manutenção da Permissão não foi definido.'); overload;
+    class procedure Required(const aValue: TMatrixNotifyEvent; const aError: string = 'O evento de Manutenção da Matriz de permissões não foi definido.'); overload;
+
+    class procedure Validate(aEdit: TEdit); overload;
+    class procedure Validate(aError: string; aEdit: TEdit; aImage: TImage; aPanel: TPanel); overload;
+    class procedure Validate(
+      const aControl: TWinControl;
+      const aTest: boolean;
+      const aMessageErroTestFalse: string;
+      const aPanelImageError: TPanel;
+      const aImageError: TImage
+      ); overload;
+  end;
+
+implementation
+
+class function Internal.RemoveAcento(const aValue: string): String;
+type
+  USASCIIString = type AnsiString(20127); // 20127 = us ascii
+begin
+  Result := String(USASCIIString(aValue));
+end;
+
+class function Internal.TrimInOut(aValue: string): string;
+var
+  LSize: integer;
+begin
+  while True do
+  begin
+    LSize  := Length(aValue);
+    aValue := StringReplace(aValue, #32#32, #32, [rfReplaceAll, rfIgnoreCase]);
+    if LSize = Length(aValue) then
+      Break;
+  end;
+  Result := Trim(aValue);
+end;
+
+class function Internal.UpperTrim(const aValue: string): string;
+begin
+  Result := Internal.TrimInOut(UpperCase(aValue));
+end;
+
+class function Internal.Empty(const aValue: string): boolean;
+begin
+  Result :=
+    (
+    (Length(aValue.Trim) = 0)
+    or
+    (aValue = format('  %s  %s    ', [TFormatSettings.Create.DateSeparator, TFormatSettings.Create.DateSeparator]))
+    or
+    (aValue = format('    %s  %s  ', [TFormatSettings.Create.DateSeparator, TFormatSettings.Create.DateSeparator]))
+    or
+    (aValue = '  -  -    ') or (aValue = '    -  -  ')
+    or
+    (aValue = '  .  .    ') or (aValue = '    .  .  ')
+    or
+    (aValue = '  /  /    ') or (aValue = '    /  /  ')
+    );
+end;
+
+class function Internal.IsEmpty(aValue: string): boolean;
+begin
+  Result := Internal.Empty(aValue);
+end;
+
+class procedure Internal.Die(aMessage: string);
+begin
+  if not aMessage.IsEmpty then
+    raise Exception.Create(aMessage);
+end;
+
+class function Internal.MD5(const aValue: string; aUpperCase: boolean = True): string;
+begin
+  Result := System.Hash.THashMD5.GetHashString(aValue);
+  if aUpperCase then
+    Result := UpperCase(Result);
+end;
+
+class procedure Internal.Validate(aEdit: TEdit);
+begin
+  if not SameStr(aEdit.Text, EmptyStr) then
+    Exit;
+
+  aEdit.SetFocus;
+  Abort;
+end;
+
+class procedure Internal.Validate(aError: string; aEdit: TEdit; aImage: TImage; aPanel: TPanel);
+begin
+  aPanel.Visible := false;
+
+  if aError.IsEmpty then
+    Exit;
+
+  aImage.Hint    := aError;
+  aPanel.Visible := True;
+  aEdit.SetFocus;
+  Abort;
+end;
+
+class procedure Internal.Validate(
+  const aControl: TWinControl;
+  const aTest: boolean;
+  const aMessageErroTestFalse: string;
+  const aPanelImageError: TPanel;
+  const aImageError: TImage
+  );
+begin
+  begin
+    aImageError.Hint         := aMessageErroTestFalse;
+    aPanelImageError.Visible := aTest;
+
+    if aTest then
+    begin
+      aControl.SetFocus;
+      Abort;
+    end;
+  end;
+
+end;
+
+class procedure Internal.Required(const aValue: Int64; const aError: string);
+begin
+  if aValue <> 0 then
+    Exit;
+
+  if not aError.IsEmpty then
+    raise Exception.Create(aError);
+
+  Abort;
+end;
+
+class procedure Internal.Required(const aValue: string; const aError: string = '');
+begin
+  if not aValue.IsEmpty then
+    Exit;
+
+  if not aError.IsEmpty then
+    raise Exception.Create(aError);
+
+  Abort;
+end;
+
+class procedure Internal.Required(const aControl: TWinControl; const aValue: string);
+begin
+  if not aValue.IsEmpty then
+    Exit;
+
+  aControl.SetFocus;
+  Abort;
+end;
+
+class procedure Internal.Required(const aControl: TWinControl; const aValue: string; const aError: string);
+begin
+  if not aValue.IsEmpty then
+    Exit;
+
+  aControl.SetFocus;
+  if not aError.IsEmpty then
+    raise Exception.Create(aError);
+
+  Abort;
+end;
+
+class procedure Internal.Required(const aValue: TResultNotifyEvent; const aError: string);
+begin
+  if not Assigned(aValue) then
+    raise Exception.Create(aError);
+end;
+
+class procedure Internal.Required(const aValue: TAuthNotifyEvent; const aError: string = 'O evento de Login não foi definido.');
+begin
+  if not Assigned(aValue) then
+    raise Exception.Create(aError);
+end;
+
+class procedure Internal.Required(const aValue: TChangePasswordNotifyEvent; const aError: string = 'O evento de Alteração de Senha não foi definido.');
+begin
+  if not Assigned(aValue) then
+    raise Exception.Create(aError);
+end;
+
+class procedure Internal.Required(const aValue: TPermissionNotifyEvent; const aError: string = 'O evento de Manutenção da Permissão não foi definido.');
+begin
+  if not Assigned(aValue) then
+    raise Exception.Create(aError);
+end;
+
+class procedure Internal.Required(const aValue: TMatrixNotifyEvent; const aError: string);
+begin
+  if not Assigned(aValue) then
+    raise Exception.Create(aError);
+end;
+
+end.

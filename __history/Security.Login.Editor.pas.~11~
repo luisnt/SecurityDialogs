@@ -1,0 +1,40 @@
+unit Security.Login.Editor;
+
+interface
+
+uses Classes, DesignIntf, DesignEditors;
+
+type
+  TSecurityLoginEditor = class(TComponentEditor)
+    procedure ExecuteVerb(Index: Integer); override;
+    function GetVerb(Index: Integer): string; override;
+    function GetVerbCount: Integer; override;
+  end;
+
+implementation
+
+uses Security.Login;
+
+{ TMyComponentEditor }
+
+procedure TSecurityLoginEditor.ExecuteVerb(Index: Integer);
+begin
+  case Index of
+    0:
+      if (Component IS TSecurityLogin) then
+        (Component AS TSecurityLogin).Execute;
+    end;
+  end;
+end;
+
+function TSecurityLoginEditor.GetVerb(Index: Integer): string;
+begin
+  Result := 'Open';
+end;
+
+function TSecurityLoginEditor.GetVerbCount: Integer;
+begin
+  Result := 1;
+end;
+
+end.

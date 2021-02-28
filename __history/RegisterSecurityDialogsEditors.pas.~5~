@@ -1,0 +1,27 @@
+unit RegisterSecurityDialogsEditors;
+
+interface
+
+uses
+  DesignIntf;
+
+procedure Register;
+
+implementation
+
+
+uses
+  Security.Login,
+  Security.Login.Editor
+    ;
+
+const
+  SPageName = 'Security Dialogs';
+
+procedure Register;
+begin
+  // Register components Editors
+  RegisterComponentEditor(TSecurityLogin, TSecurityLoginEditor);
+end;
+
+end.

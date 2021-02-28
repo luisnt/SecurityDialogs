@@ -1,0 +1,316 @@
+unit Security.Login.View;
+
+interface
+
+uses
+   Winapi.Windows, Winapi.Messages, System.SysUtils, System.Variants, System.Classes, Vcl.Graphics, Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.StdCtrls, Vcl.ExtCtrls,
+   Vcl.Buttons, Vcl.AppEvnts, Vcl.Imaging.jpeg, Vcl.Imaging.pngimage,
+
+   PngFunctions, PngSpeedButton,
+
+   Security.Login.Interfaces
+     ;
+
+type
+   TSecurityLoginView = class(TForm, iLoginView, iLoginViewProperties, iLoginViewEvents)
+      EditEmail: TEdit;
+      EditPassword: TEdit;
+      ImageEmail: TImage;
+      ImageEmailError: TImage;
+      ImageLogo: TImage;
+      ImagePassword: TImage;
+      ImagePasswordError: TImage;
+      LabelConnecting: TLabel;
+      LabelEmail: TLabel;
+      LabelIPComputerCaption: TLabel;
+      LabelComputerIPValue: TLabel;
+      LabelIPServerCaption: TLabel;
+      LabelServerIPValue: TLabel;
+      LabelPassword: TLabel;
+      PanelEmail: TPanel;
+      PanelImageEmail: TPanel;
+      PanelImageEmailError: TPanel;
+      PanelImagePassword: TPanel;
+      PanelImagePasswordError: TPanel;
+      PanelPassword: TPanel;
+      PanelStatus: TPanel;
+      PanelStatusBackground: TPanel;
+      PanelStatusBackgroundClient: TPanel;
+      PanelStatusShapeBottom: TShape;
+      PanelStatusShapeLeft: TShape;
+      PanelStatusShapeRight: TShape;
+      PanelTitle: TPanel;
+      PanelTitleAppInfo: TPanel;
+      PanelTitleAppInfoUpdated: TPanel;
+      PanelTitleAppInfoUpdatedCaption: TLabel;
+      PanelTitleAppInfoUpdatedValue: TLabel;
+      PanelTitleAppInfoVersion: TPanel;
+      PanelTitleAppInfoVersionCaption: TLabel;
+      PanelTitleAppInfoVersionValue: TLabel;
+      PanelTitleBackgroung: TPanel;
+      PanelTitleDOT: TLabel;
+      PanelTitleLabelSigla: TLabel;
+      PanelTitleLabelAutenticacao: TLabel;
+      PanelToolbar: TPanel;
+      PngSpeedButtonCancelar: TPngSpeedButton;
+      PngSpeedButtonOk: TPngSpeedButton;
+      ShapeBodyLeft: TShape;
+      ShapeBodyRight: TShape;
+      ShapePanelTitleLeft: TShape;
+      ShapePanelTitleRight: TShape;
+      ShapePanelTitleTop: TShape;
+      ShapeToolbarLeft: TShape;
+      ShapeToolbarRight: TShape;
+      ShapePanelTitleBottom: TShape;
+      Shape1: TShape;
+      ShapeToolbarTop: TShape;
+      procedure EditEmailChange(Sender: TObject);
+      procedure EditPasswordChange(Sender: TObject);
+      procedure PngSpeedButtonCancelarClick(Sender: TObject);
+      procedure PngSpeedButtonOkClick(Sender: TObject);
+      procedure FormKeyDown(Sender: TObject; var Key: Word; Shift: TShiftState);
+      procedure FormActivate(Sender: TObject);
+      strict private
+         FOnAuth  : TAuthNotifyEvent;
+         FOnCancel: TCancelNotifyEvent;
+         { Strict private declarations }
+
+      private
+         { Private declarations }
+         function getOnAuth: TAuthNotifyEvent;
+         function getOnCancel: TCancelNotifyEvent;
+
+         procedure setOnAuth(const Value: TAuthNotifyEvent);
+         procedure setOnCancel(const Value: TCancelNotifyEvent);
+
+         function getComputerIP: string;
+         function getServerIP: string;
+         function getSigla: string;
+         function getUpdatedAt: string;
+         function getVersion: string;
+
+         procedure setComputerIP(const Value: string);
+         procedure setServerIP(const Value: string);
+         procedure setSigla(const Value: string);
+         procedure setUpdatedAt(const Value: string);
+         procedure setVersion(const Value: string);
+
+      protected
+         { Protected declarations }
+         procedure doLogin(const aEmail: string; const aPassword: string);
+         procedure doCancel;
+
+      public
+         { Public declarations }
+         function Properties: iLoginViewProperties;
+         function Events: iLoginViewEvents;
+
+      published
+         { Published declarations Properties }
+         property ComputerIP: string read getComputerIP write setComputerIP;
+         property ServerIP  : string read getServerIP write setServerIP;
+         property Sigla     : string read getSigla write setSigla;
+         property Version   : string read getVersion write setVersion;
+         property UpdatedAt : string read getUpdatedAt write setUpdatedAt;
+
+         { Published declarations Events }
+         property OnAuth  : TAuthNotifyEvent read getOnAuth write setOnAuth;
+         property OnCancel: TCancelNotifyEvent read getOnCancel write setOnCancel;
+   end;
+
+var
+   SecurityLoginView: TSecurityLoginView;
+
+implementation
+
+{$R *.dfm}
+
+
+procedure TSecurityLoginView.EditEmailChange(Sender: TObject);
+begin
+   PanelImageEmailError.Visible := false;
+end;
+
+procedure TSecurityLoginView.EditPasswordChange(Sender: TObject);
+begin
+   PanelImagePasswordError.Visible := false;
+end;
+
+procedure TSecurityLoginView.FormActivate(Sender: TObject);
+begin
+   EditEmail.Clear;
+   EditPassword.Clear;
+end;
+
+procedure TSecurityLoginView.FormKeyDown(Sender: TObject; var Key: Word; Shift: TShiftState);
+begin
+   case Key of
+      VK_RETURN:
+         begin
+            if ActiveControl = EditPassword then
+               PngSpeedButtonOk.Click
+            else
+               SelectNext(ActiveControl, true, true);
+            Key := VK_CANCEL;
+         end;
+      VK_F9:
+         if DEBUG_PROCESS <> 0 then
+         begin
+            EditEmail.Text    := 'luisnt';
+            EditPassword.Text := '7ujkl05';
+            PngSpeedButtonOk.Click;
+         end;
+   end;
+end;
+
+function TSecurityLoginView.getComputerIP: string;
+begin
+   Result := LabelComputerIPValue.Caption;
+end;
+
+function TSecurityLoginView.getServerIP: string;
+begin
+   Result := LabelServerIPValue.Caption;
+end;
+
+function TSecurityLoginView.getOnAuth: TAuthNotifyEvent;
+begin
+   Result := FOnAuth;
+end;
+
+function TSecurityLoginView.getOnCancel: TCancelNotifyEvent;
+begin
+   Result := FOnCancel;
+end;
+
+function TSecurityLoginView.getSigla: string;
+begin
+   Result := PanelTitleLabelSigla.Caption;
+end;
+
+function TSecurityLoginView.getUpdatedAt: string;
+begin
+   Result := PanelTitleAppInfoUpdatedValue.Caption;
+end;
+
+function TSecurityLoginView.getVersion: string;
+begin
+   Result := PanelTitleAppInfoVersionValue.Caption;
+end;
+
+procedure TSecurityLoginView.setComputerIP(const Value: string);
+begin
+   LabelComputerIPValue.Caption := Value;
+end;
+
+procedure TSecurityLoginView.setServerIP(const Value: string);
+begin
+   LabelServerIPValue.Caption := Value;
+end;
+
+procedure TSecurityLoginView.setOnAuth(const Value: TAuthNotifyEvent);
+begin
+   FOnAuth := Value;
+end;
+
+procedure TSecurityLoginView.setOnCancel(const Value: TCancelNotifyEvent);
+begin
+   FOnCancel := Value;
+end;
+
+procedure TSecurityLoginView.setSigla(const Value: string);
+begin
+   PanelTitleLabelSigla.Caption := Value;
+end;
+
+procedure TSecurityLoginView.setUpdatedAt(const Value: string);
+begin
+   PanelTitleAppInfoUpdatedValue.Caption := Value;
+end;
+
+procedure TSecurityLoginView.setVersion(const Value: string);
+begin
+   PanelTitleAppInfoVersionValue.Caption := Value;
+end;
+
+procedure Validate(aEdit: TEdit); overload;
+begin
+   if not SameStr(aEdit.Text, EmptyStr) then
+      Exit;
+
+   aEdit.SetFocus;
+   Abort;
+end;
+
+procedure Validate(aOnAuth: TAuthNotifyEvent); overload;
+begin
+   if not Assigned(aOnAuth) then
+      raise Exception.Create('O evento de Login não foi definido.');
+end;
+
+procedure Continues(aError: string; aEdit: TEdit; aImage: TImage; aPanel: TPanel);
+begin
+   aPanel.Visible := false;
+
+   if aError.IsEmpty then
+      Exit;
+
+   aImage.Hint    := aError;
+   aPanel.Visible := true;
+   aEdit.SetFocus;
+   Abort;
+end;
+
+procedure TSecurityLoginView.doLogin(const aEmail: string; const aPassword: string);
+var
+   LEmailError   : string;
+   LPasswordError: string;
+   LIsAuth       : boolean;
+begin
+   Validate(EditEmail);
+   Validate(EditPassword);
+   Validate(FOnAuth);
+   LIsAuth := false;
+   OnAuth(aEmail, aPassword, LIsAuth, LEmailError, LPasswordError);
+
+   if LIsAuth then
+      ModalResult := mrOk;
+
+   Continues(LEmailError, EditEmail, ImageEmailError, PanelImageEmailError);
+   Continues(LPasswordError, EditPassword, ImagePasswordError, PanelImagePasswordError);
+end;
+
+procedure TSecurityLoginView.doCancel;
+begin
+   if not Assigned(FOnCancel) then
+      Exit;
+   FOnCancel;
+end;
+
+function TSecurityLoginView.Properties: iLoginViewProperties;
+begin
+   Result := Self;
+end;
+
+function TSecurityLoginView.Events: iLoginViewEvents;
+begin
+   Result := Self;
+end;
+
+procedure TSecurityLoginView.PngSpeedButtonOkClick(Sender: TObject);
+begin
+   doLogin(EditEmail.Text, EditPassword.Text);
+end;
+
+procedure TSecurityLoginView.PngSpeedButtonCancelarClick(Sender: TObject);
+begin
+   doCancel;
+   Close;
+end;
+
+initialization
+
+register
+
+
+end.
